@@ -1,0 +1,95 @@
+/* General site and gallery modal styles */
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: #181818;
+    margin: 0;
+    color: #fff;
+}
+.logo-banner {
+    background: #222;
+    text-align: center;
+    padding: 2rem 0 1rem 0;
+    border-bottom: 3px solid #ff6b35;
+}
+.anrp-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.anrp-text { font-size: 2.2rem; font-weight: bold; color: #fff; }
+.anrp-arrow { color: #ff6b35; font-size: 2rem; margin-left: .5rem; }
+.logo-title { color: #fff; font-size: 2.3rem; margin: 0 0 0.3rem 0; }
+.logo-subtitle { color: #eee; font-size: 1.15rem;}
+.logo-contact { color: #ff6b35; font-weight: bold; font-size: 1.08rem;}
+.header, .navbar { background: #181818; border-bottom: 1px solid #333; }
+.nav-container {
+    max-width: 1200px; margin: 0 auto; display: flex;
+    justify-content: space-between; align-items: center; padding: 0 2rem;
+}
+.nav-brand .brand-text { font-size: 1.5rem; color: #fff; font-weight: bold; cursor: pointer;}
+.nav-menu { list-style: none; display: flex; gap: 2rem;}
+.nav-link { color: #eee; text-decoration: none; padding: .5rem 1rem; border-radius: 4px;}
+.nav-link.active, .nav-link:hover { color: #fff; background: #ff6b35; }
+.contact-phone { color: #ff6b35; font-weight: bold;}
+.hamburger { display: none;}
+.page { display: none; min-height: 40vh;}
+.page.active { display: block;}
+.section-title { color: #fff; text-align: center; font-size: 2rem; margin-bottom: 0.5em; }
+.section-subtitle { text-align: center; color: #bbb;}
+.projects-grid { display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;}
+.project-card {
+    background: #222; border-radius: 12px; box-shadow: 0 2px 12px #000c;
+    padding: 1.5rem; width: 320px; transition: 0.2s; margin-bottom: 2rem;}
+.project-card:hover { box-shadow: 0 3px 24px #ff6b3599; transform: translateY(-3px);}
+.project-header { display: flex; justify-content: space-between; align-items: center;}
+.project-title { color: #fff;}
+.status-progress { background: #35d67a33; color: #35d67a; padding: 3px 13px; border-radius: 5px;}
+.status-planning { background: #faf15a33; color: #ffd600; padding: 3px 13px; border-radius: 5px;}
+.spec { color: #ccc; display: flex; justify-content: space-between;}
+.spec-label { color: #aaa;}
+.spec-value { color: #fff; font-weight: bold;}
+.project-description { color: #ddd;}
+.btn {background: #333; color: #fff; border: none; border-radius: 6px; padding: 9px 22px; cursor: pointer; font-size: 1rem;}
+.btn--primary { background: #ff6b35;}
+.btn--primary:hover, .btn--secondary:hover { background: #ff8c35;}
+.btn--secondary { background: #232324; color: #ff6b35; border: 1.2px solid #ff6b35;}
+.btn--lg { font-size: 1.13rem; padding: 13px 29px;}
+.services-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;}
+.service-card { background: #232324; border-radius: 8px; padding: 2rem; width: 300px;}
+.form-group { margin-bottom: 1rem;}
+input, select, textarea { border-radius: 6px; border: 1px solid #333; padding: 0.7em; width: 100%;}
+input, select, textarea { background: #232324; color: #fff;}
+input:focus, textarea:focus { outline: 2px solid #ff6b35;}
+/* Gallery Modal Styles */
+.gallery-modal {
+    display: none;
+    position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.93);
+    z-index: 9999;
+    justify-content: center; align-items: start; overflow-y: auto;
+}
+.gallery-modal.active { display: flex; animation: fadeIn 0.2s;}
+@keyframes fadeIn { from {opacity:0} to {opacity:1}}
+.gallery-content {
+    background: #232324; padding: 2rem 1rem; border-radius:14px;
+    box-shadow: 0 6px 48px #111e; margin: 4vh auto 4vh auto; max-width: 950px; min-width:320px; width: 98vw;
+}
+.close-modal {
+    float:right;background:none;border:none;color:#fff;font-size:2.5rem;cursor:pointer;position: absolute;top:15px;right:30px;z-index:2;
+}
+.gallery-section h3 {margin-bottom:.6em;}
+.gallery-row {
+    display: flex; flex-wrap: wrap; gap:1.3rem; margin-bottom: 1.7em;
+}
+.gallery-row img, .gallery-row video {
+    border-radius:9px; box-shadow:0 2px 15px #0009; max-width:220px;max-height:150px;object-fit:cover;background:#222;}
+/* Responsive */
+@media (max-width: 900px) {
+    .gallery-content { min-width: 96vw; max-width: 96vw;}
+    .nav-container { padding: 0 0.7rem;}
+}
+@media (max-width: 600px) {
+    .gallery-row img, .gallery-row video { max-width: 99vw; width:94vw; min-width: 40vw;}
+    .gallery-content { padding:1rem 1vw;}
+}

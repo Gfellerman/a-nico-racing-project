@@ -1,0 +1,6 @@
+# Large files
+*.mp4
+**/node_modules/
+large_media_backup/
+# Files over 50MB
+*.TS.mp4
