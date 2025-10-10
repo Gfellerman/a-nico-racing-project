@@ -2,7 +2,7 @@
   "name": "anrp-cms",
   "version": "0.1.0",
   "private": true,
-  "description": "A Strapi application",
+  "description": "A Strapi application for A Nico Racing Project",
   "scripts": {
     "build": "strapi build",
     "console": "strapi console",
@@ -11,6 +11,10 @@
     "develop": "strapi develop",
     "start": "strapi start",
     "strapi": "strapi",
+    "setup": "node setup-env.js",
+    "setup:env": "node setup-env.js",
+    "clean": "rm -rf dist build .cache",
+    "reset": "rm -rf node_modules package-lock.json && npm install",
     "upgrade": "npx @strapi/upgrade latest",
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
