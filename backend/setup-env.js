@@ -1,5 +1,3 @@
-# Create the setup-env.js file (in backend folder)
-cat > setup-env.js << 'EOF'
 #!/usr/bin/env node
 const fs = require('fs');
 const crypto = require('crypto');
@@ -37,4 +35,3 @@ PUBLIC_ADMIN_URL=${serverUrl}/admin
 fs.writeFileSync('.env', envContent);
 console.log('✅ .env file created successfully!');
 console.log(`🔐 Admin URL: ${serverUrl}/admin`);
-EOF
