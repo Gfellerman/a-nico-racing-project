@@ -2,26 +2,23 @@
   "name": "anrp-cms",
   "version": "0.1.0",
   "private": true,
-  "description": "A Strapi application for ANRP motorsport website",
+  "description": "A Strapi CMS for ANRP motorsport website",
   "scripts": {
     "build": "strapi build",
     "console": "strapi console",
-    "deploy": "strapi deploy", 
+    "deploy": "strapi deploy",
     "dev": "strapi develop",
     "develop": "strapi develop",
     "start": "strapi start",
     "strapi": "strapi",
     "setup": "node setup-env.js",
-    "setup:dev": "npm run setup && npm run develop",
-    "clean": "rm -rf dist build .cache",
-    "reset": "rm -rf node_modules package-lock.json && npm install",
     "upgrade": "npx @strapi/upgrade latest",
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "5.25.0",
-    "@strapi/plugin-users-permissions": "5.25.0", 
-    "@strapi/strapi": "5.25.0",
+    "@strapi/plugin-cloud": "5.27.0",
+    "@strapi/plugin-users-permissions": "5.27.0",
+    "@strapi/strapi": "5.27.0",
     "better-sqlite3": "11.3.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -30,7 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18", 
+    "@types/react": "^18",
     "@types/react-dom": "^18",
     "typescript": "^5"
   },
@@ -39,7 +36,7 @@
     "npm": ">=6.0.0"
   },
   "strapi": {
-    "uuid": "7d6117d5-d81d-40a3-854e-6271437038c1",
-    "installId": "6b20aaacc8437ecfa5e3cdb152990163314a9c65eba159e320f1032279085ee4"
+    "uuid": "760428bd-7c87-4322-99ae-d2da5a5aeb9a",
+    "installId": "9b7fe0cabbaa1e19177bd4a0448fec972188ddea706c2e0dfce609596e3dafe9"
   }
 }
