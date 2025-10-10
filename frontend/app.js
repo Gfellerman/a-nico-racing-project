@@ -1,66 +1,63 @@
-// ANRP Website Gallery Logic
+// Replace the entire app.js content with this:
+const STRAPI_API = 'https://organic-space-garbanzo-r4xwr7q449gv35474-1337.app.github.dev/api';
+
+// Load projects from Strapi on page load
 document.addEventListener('DOMContentLoaded', function() {
     setupNav();
     setupProjectDetails();
     setupMobileMenu();
     setupHero();
+    loadProjectsFromStrapi(); // Add this line
 });
 
-function setupNav() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.onclick = function(e) {
-            e.preventDefault();
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const tgt = link.getAttribute('href').replace('#', '');
-            document.getElementById(tgt).classList.add('active');
-            navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-            window.scrollTo(0, 0);
-        }
-    });
-    document.querySelector('.brand-text').onclick = function() {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('home').classList.add('active');
-        navLinks.forEach(l => l.classList.remove('active'));
-        navLinks[0].classList.add('active');
-        window.scrollTo(0, 0);
+// New function to load projects from Strapi
+async function loadProjectsFromStrapi() {
+    try {
+        const response = await fetch(`${STRAPI_API}/projects?populate=*`);
+        const data = await response.json();
+        renderProjects(data.data);
+    } catch (error) {
+        console.error('Error loading projects:', error);
+        // Keep existing hardcoded projects as fallback
     }
 }
 
-function setupHero() {
-    let btn = document.querySelector('.hero-cta');
-    if (btn) btn.onclick = () => {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('projects').classList.add('active');
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.querySelector('.nav-link[href="#projects"]').classList.add('active');
-        window.scrollTo(0,0);
-    }
-}
+// Function to render projects dynamically
+function renderProjects(projects) {
+    const projectsGrid = document.querySelector('.projects-grid');
+    if (!projectsGrid || projects.length === 0) return;
 
-function setupMobileMenu() {
-    // (add hamburger/side nav support here if you wish)
-}
+    // Clear existing projects
+    projectsGrid.innerHTML = '';
 
-function setupProjectDetails() {
-    // Open modal
-    document.querySelectorAll('.project-btn').forEach(btn => {
-        btn.onclick = function(e) {
-            const projectId = btn.getAttribute('data-project');
-            openGallery(projectId);
-        }
+    // Render each project from Strapi
+    projects.forEach(project => {
+        const { attributes } = project;
+        const projectCard = createProjectCard(project.id, attributes);
+        projectsGrid.appendChild(projectCard);
     });
 }
 
-window.openGallery = function(projectId) {
-    const modal = document.getElementById(`${projectId}-details`);
-    if (modal) { modal.classList.add('active'); }
-    document.body.style.overflow = 'hidden';
-};
-
-window.closeGallery = function(projectId) {
-    const modal = document.getElementById(`${projectId}-details`);
-    if (modal) { modal.classList.remove('active'); }
-    document.body.style.overflow = 'auto';
-};
+// Create project card HTML
+function createProjectCard(id, attributes) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.setAttribute('data-project', `project-${id}`);
+    
+    card.innerHTML = `
+        <div class="project-header">
+            <h3 class="project-title">${attributes.title}</h3>
+            <span class="project-status status-progress">In Progress</span>
+        </div>
+        <div class="project-specs">
+            <div class="spec">
+                <span class="spec-label">Specifications:</span>
+                <span class="spec-value">${attributes.specifications}</span>
+            </div>
+        </div>
+        <p class="project-description">${attributes.description || 'Project description coming soon...'}</p>
+        <button class="btn btn--secondary project-btn" data-project="project-${id}">View Details</button>
+    `;
+    
+    return card;
+}

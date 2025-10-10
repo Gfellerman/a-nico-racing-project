@@ -9,7 +9,7 @@ class APIService {
         throw new Error('Failed to fetch projects');
       }
       const data = await response.json();
-      return data.data; // Return just the projects array
+      return data.data;
     } catch (error) {
       console.error('Error fetching projects:', error);
       return [];
@@ -30,7 +30,6 @@ class APIService {
     }
   }
 
-  // Helper function to format Strapi data for frontend
   formatProject(strapiProject) {
     const { attributes } = strapiProject;
     return {
@@ -40,9 +39,7 @@ class APIService {
       description: attributes.description,
       is_featured: attributes.is_featured,
       images: attributes.featured_image ? [attributes.featured_image] : [],
-      status: attributes.status || 'In Progress',
-      createdAt: attributes.createdAt,
-      updatedAt: attributes.updatedAt
+      status: attributes.status || 'In Progress'
     };
   }
 }
