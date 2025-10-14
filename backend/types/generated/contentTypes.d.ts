@@ -365,7 +365,7 @@ export interface AdminUser extends Schema.CollectionType {
 export interface ApiProjectProject extends Schema.CollectionType {
   collectionName: 'projects';
   info: {
-    description: '';
+    description: 'Motorsport projects with timelines, galleries, and race results';
     displayName: 'Project';
     pluralName: 'projects';
     singularName: 'project';
@@ -374,6 +374,15 @@ export interface ApiProjectProject extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
+    category: Attribute.Enumeration<
+      [
+        'Track Racing',
+        'Off-Road Rally',
+        'Kart Racing',
+        'Supercar Rebuild',
+        'Other'
+      ]
+    >;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::project.project',
@@ -381,15 +390,23 @@ export interface ApiProjectProject extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
-    Description: Attribute.Blocks;
-    featured_image: Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
-    is_featured: Attribute.Boolean;
+    description: Attribute.Text;
+    engine_type: Attribute.String;
+    featured_image: Attribute.Media<'images'>;
+    image_gallery: Attribute.Media<'images', true>;
+    is_featured: Attribute.Boolean & Attribute.DefaultTo<false>;
+    media_mentions: Attribute.JSON;
+    power_hp: Attribute.Integer;
     publishedAt: Attribute.DateTime;
-    Specifications: Attribute.String;
-    tittle: Attribute.String;
+    race_results: Attribute.JSON;
+    slug: Attribute.UID<'api::project.project', 'title'>;
+    specifications: Attribute.String & Attribute.Required;
+    status: Attribute.Enumeration<
+      ['Planning', 'In Progress', 'Completed', 'On Hold']
+    >;
+    technical_specs: Attribute.JSON;
+    timeline_tasks: Attribute.JSON;
+    title: Attribute.String & Attribute.Required;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::project.project',
@@ -397,6 +414,7 @@ export interface ApiProjectProject extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    video_gallery: Attribute.Media<'videos', true>;
   };
 }
 

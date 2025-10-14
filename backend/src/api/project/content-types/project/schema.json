@@ -5,34 +5,75 @@
     "singularName": "project",
     "pluralName": "projects",
     "displayName": "Project",
-    "description": ""
+    "description": "Motorsport projects with timelines, galleries, and race results"
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "tittle": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "description": {
+      "type": "text"
+    },
+    "specifications": {
+      "type": "string",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["Planning", "In Progress", "Completed", "On Hold"]
+    },
+    "category": {
+      "type": "enumeration", 
+      "enum": ["Track Racing", "Off-Road Rally", "Kart Racing", "Supercar Rebuild", "Other"]
+    },
+    "power_hp": {
+      "type": "integer"
+    },
+    "engine_type": {
       "type": "string"
-    },
-    "Description": {
-      "type": "blocks"
-    },
-    "Specifications": {
-      "type": "string"
-    },
-    "featured_image": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
-      "type": "media",
-      "multiple": true
     },
     "is_featured": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
+    },
+    "featured_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "image_gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "video_gallery": {
+      "type": "media", 
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["videos"]
+    },
+    "timeline_tasks": {
+      "type": "json"
+    },
+    "race_results": {
+      "type": "json"
+    },
+    "media_mentions": {
+      "type": "json"
+    },
+    "technical_specs": {
+      "type": "json"
     }
   }
 }
