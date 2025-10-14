@@ -239,7 +239,7 @@ function App() {
   const fetchProjects = async () => {
     try {
       setLoading(true)
-      const response = await fetch('https://organic-space-garbanzo-r4xwr7q449gv35474-1337.app.github.dev/api/projects')
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/projects`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
