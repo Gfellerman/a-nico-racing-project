@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-// ANRP WEBSITE - Force reload
-
-
 
 // Types
 interface Project {
@@ -259,26 +256,74 @@ function App() {
   }
 
   const handleProjectClick = (project: Project) => {
-    console.log('Project clicked:', project)
+    console.log('ANRP Project clicked:', project)
     // TODO: Navigate to project detail page
   }
 
-return (
-  <div style={{
-    backgroundColor: '#1a1a1a', 
-    color: '#ff6b35', 
-    minHeight: '100vh', 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    flexDirection: 'column',
-    fontSize: '2rem'
-  }}>
-    <h1>🏁 ANRP RACING PROJECT 🏁</h1>
-    <h2>Testing - If you see this, React is loading our code!</h2>
-    <p>BMW E46 M3 GTR Project Status: WORKING!</p>
-  </div>
-)
+  return (
+    <AppContainer>
+      <Header>
+        <Nav>
+          <Logo>
+            <LogoText>ANRP</LogoText>
+          </Logo>
+          <ContactPhone>+244 923 574 312</ContactPhone>
+        </Nav>
+      </Header>
 
+      <HeroSection>
+        <HeroContent>
+          <HeroTitle>A NICO RACING PROJECT</HeroTitle>
+          <HeroSubtitle>Professional Race Car Preparation & Motorsport Engineering</HeroSubtitle>
+          <HeroDescription>From 70HP Karts to 650HP Supercars - Complete Motorsport Solutions</HeroDescription>
+        </HeroContent>
+      </HeroSection>
+
+      <ProjectsSection>
+        <Container>
+          <SectionTitle>Current Projects</SectionTitle>
+          
+          {loading && <LoadingMessage>Loading projects...</LoadingMessage>}
+          
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          
+          {!loading && !error && (
+            <ProjectsGrid>
+              {projects.map((project) => (
+                <ProjectCard key={project.id}>
+                  <ProjectHeader>
+                    <ProjectTitle>{project.title}</ProjectTitle>
+                    <ProjectStatus status={project.status}>{project.status}</ProjectStatus>
+                  </ProjectHeader>
+                  
+                  <ProjectSpecs>
+                    <Spec>
+                      <SpecLabel>Engine:</SpecLabel>
+                      <SpecValue>{project.engine_type}</SpecValue>
+                    </Spec>
+                    <Spec>
+                      <SpecLabel>Power:</SpecLabel>
+                      <SpecValue>{project.power_hp} HP</SpecValue>
+                    </Spec>
+                    <Spec>
+                      <SpecLabel>Category:</SpecLabel>
+                      <SpecValue>{project.category}</SpecValue>
+                    </Spec>
+                  </ProjectSpecs>
+                  
+                  <ProjectDescription>{project.specifications}</ProjectDescription>
+                  
+                  <Button onClick={() => handleProjectClick(project)}>
+                    View Details
+                  </Button>
+                </ProjectCard>
+              ))}
+            </ProjectsGrid>
+          )}
+        </Container>
+      </ProjectsSection>
+    </AppContainer>
+  )
+}
 
 export default App
