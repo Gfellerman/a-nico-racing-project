@@ -239,7 +239,7 @@ function App() {
   const fetchProjects = async () => {
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:1337/api/projects')
+      const response = await fetch('https://organic-space-garbanzo-r4xwr7q449gv35474-1337.app.github.dev/api/projects')
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
