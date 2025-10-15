@@ -21,7 +21,6 @@ export default defineConfig({
     }
   },
   define: {
-    // Ensure env variables are available
     'process.env': {}
   }
 })
