@@ -212,12 +212,13 @@ function App() {
       setLoading(true)
       setError(null)
 
-      // Fetch data from correct Strapi v4 endpoint
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/projects`)
+      // Fetch data with populate parameter to get timeline_tasks and race_results
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/projects?populate=*`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
       const data = await response.json()
+      console.log('API Response:', data) // Debug log
 
       // Normalize Strapi v4 "data[].attributes" structure
       const normalizedProjects = (data.data || []).map((item: any) => ({
@@ -245,7 +246,62 @@ function App() {
 
   const handleProjectClick = (project: Project) => {
     console.log('ANRP Project clicked:', project)
-    // Optional: Navigate to project detail page
+    
+    // Create detailed info popup
+    let details = `🏎️ ${project.title}\n\n`
+    details += `📊 SPECIFICATIONS:\n`
+    details += `• Engine: ${project.engine_type || 'N/A'}\n`
+    details += `• Power: ${project.power_hp || 'N/A'} HP\n`
+    details += `• Category: ${project.category || 'N/A'}\n`
+    details += `• Status: ${project.status || 'N/A'}\n\n`
+    
+    if (project.description) {
+      details += `📝 DESCRIPTION:\n${project.description}\n\n`
+    }
+    
+    // Parse and display timeline tasks
+    if (project.timeline_tasks) {
+      try {
+        const tasks = typeof project.timeline_tasks === 'string' 
+          ? JSON.parse(project.timeline_tasks) 
+          : project.timeline_tasks
+        
+        if (Array.isArray(tasks) && tasks.length > 0) {
+          details += `⏱️ TIMELINE:\n`
+          tasks.forEach(task => {
+            const icon = task.status === 'completed' ? '✅' : 
+                        task.status === 'in_progress' ? '🔄' : '📋'
+            details += `${icon} ${task.task}${task.date ? ` (${task.date})` : ''}\n`
+          })
+          details += '\n'
+        }
+      } catch (e) {
+        console.log('Error parsing timeline_tasks:', e)
+      }
+    }
+    
+    // Parse and display race results
+    if (project.race_results) {
+      try {
+        const results = typeof project.race_results === 'string'
+          ? JSON.parse(project.race_results)
+          : project.race_results
+        
+        if (Array.isArray(results) && results.length > 0) {
+          details += `🏆 RACE RESULTS:\n`
+          results.forEach(result => {
+            details += `${result.event}: ${result.result || 'N/A'} (${result.date || 'N/A'})\n`
+            if (result.notes) {
+              details += `   Notes: ${result.notes}\n`
+            }
+          })
+        }
+      } catch (e) {
+        console.log('Error parsing race_results:', e)
+      }
+    }
+    
+    alert(details)
   }
 
   return (
