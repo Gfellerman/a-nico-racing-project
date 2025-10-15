@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 // Types
 interface Project {
   id: number
   title: string
+  slug?: string | null
   specifications: string
   status: string
   category: string
   power_hp: number
   engine_type: string
   is_featured: boolean
-  description: string
-  timeline_tasks?: any
-  race_results?: any
+  description: any
+  timeline_tasks?: any[]
+  race_results?: any[]
   featured_image?: any
 }
 
-// Styled Components (same as before, full definitions!)
+// Styled Components
 const AppContainer = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
@@ -64,7 +66,7 @@ const ContactPhone = styled.div`
 const HeroSection = styled.section`
   padding: 4rem 0;
   text-align: center;
-  background: 
+  background:
     radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0);
   background-size: 20px 20px;
 `
@@ -137,15 +139,15 @@ const ProjectTitle = styled.h3`
   font-weight: 600;
   margin: 0;
 `
-const ProjectStatus = styled.span<{ status: string }>`
+const ProjectStatus = styled.span<{ $status: string }>`
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
-  background: ${props => 
-    props.status === 'In Progress' ? 'rgba(52, 168, 83, 0.2)' : 'rgba(255, 193, 7, 0.2)'};
-  color: ${props => 
-    props.status === 'In Progress' ? '#34a853' : '#ffc107'};
+  background: ${props =>
+    props.$status === 'In Progress' ? 'rgba(52, 168, 83, 0.2)' : 'rgba(255, 193, 7, 0.2)'};
+  color: ${props =>
+    props.$status === 'In Progress' ? '#34a853' : '#ffc107'};
 `
 const ProjectSpecs = styled.div`
   display: grid;
@@ -199,6 +201,7 @@ const ErrorMessage = styled.div`
 `
 
 function App() {
+  const navigate = useNavigate()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -212,18 +215,14 @@ function App() {
       setLoading(true)
       setError(null)
 
-      // Fetch data with populate parameter to get timeline_tasks and race_results
       const response = await fetch(`${import.meta.env.VITE_API_URL}/projects?populate=*`)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
       const data = await response.json()
-      console.log('API Response:', data) // Debug log
 
-      // Normalize Strapi v4 "data[].attributes" structure
-      const normalizedProjects = (data.data || []).map((item: any) => ({
+      const normalized: Project[] = (data.data || []).map((item: any) => ({
         id: item.id,
         title: item.attributes.title,
+        slug: item.attributes.slug,
         specifications: item.attributes.specifications,
         status: item.attributes.status,
         category: item.attributes.category,
@@ -235,7 +234,7 @@ function App() {
         race_results: item.attributes.race_results,
         featured_image: item.attributes.featured_image
       }))
-      setProjects(normalizedProjects)
+      setProjects(normalized)
     } catch (err) {
       console.error('Error fetching projects:', err)
       setError('Failed to load projects. Please check if Strapi is running and your Codespace .env is correct.')
@@ -244,73 +243,16 @@ function App() {
     }
   }
 
-  const handleProjectClick = (project: Project) => {
-    console.log('ANRP Project clicked:', project)
-    
-    // Create detailed info popup
-    let details = `🏎️ ${project.title}\n\n`
-    details += `📊 SPECIFICATIONS:\n`
-    details += `• Engine: ${project.engine_type || 'N/A'}\n`
-    details += `• Power: ${project.power_hp || 'N/A'} HP\n`
-    details += `• Category: ${project.category || 'N/A'}\n`
-    details += `• Status: ${project.status || 'N/A'}\n\n`
-    
-    if (project.description) {
-      details += `📝 DESCRIPTION:\n${project.description}\n\n`
-    }
-    
-    // Parse and display timeline tasks
-    if (project.timeline_tasks) {
-      try {
-        const tasks = typeof project.timeline_tasks === 'string' 
-          ? JSON.parse(project.timeline_tasks) 
-          : project.timeline_tasks
-        
-        if (Array.isArray(tasks) && tasks.length > 0) {
-          details += `⏱️ TIMELINE:\n`
-          tasks.forEach(task => {
-            const icon = task.status === 'completed' ? '✅' : 
-                        task.status === 'in_progress' ? '🔄' : '📋'
-            details += `${icon} ${task.task}${task.date ? ` (${task.date})` : ''}\n`
-          })
-          details += '\n'
-        }
-      } catch (e) {
-        console.log('Error parsing timeline_tasks:', e)
-      }
-    }
-    
-    // Parse and display race results
-    if (project.race_results) {
-      try {
-        const results = typeof project.race_results === 'string'
-          ? JSON.parse(project.race_results)
-          : project.race_results
-        
-        if (Array.isArray(results) && results.length > 0) {
-          details += `🏆 RACE RESULTS:\n`
-          results.forEach(result => {
-            details += `${result.event}: ${result.result || 'N/A'} (${result.date || 'N/A'})\n`
-            if (result.notes) {
-              details += `   Notes: ${result.notes}\n`
-            }
-          })
-        }
-      } catch (e) {
-        console.log('Error parsing race_results:', e)
-      }
-    }
-    
-    alert(details)
+  const openProject = (project: Project) => {
+    const slug = project.slug || `id-${project.id}`
+    navigate(`/projects/${slug}`)
   }
 
   return (
     <AppContainer>
       <Header>
         <Nav>
-          <Logo>
-            <LogoText>ANRP</LogoText>
-          </Logo>
+          <Logo><LogoText>ANRP</LogoText></Logo>
           <ContactPhone>+244 923 574 312</ContactPhone>
         </Nav>
       </Header>
@@ -334,7 +276,7 @@ function App() {
                 <ProjectCard key={project.id}>
                   <ProjectHeader>
                     <ProjectTitle>{project.title}</ProjectTitle>
-                    <ProjectStatus status={project.status}>{project.status}</ProjectStatus>
+                    <ProjectStatus $status={project.status}>{project.status}</ProjectStatus>
                   </ProjectHeader>
                   <ProjectSpecs>
                     <Spec>
@@ -350,10 +292,8 @@ function App() {
                       <SpecValue>{project.category || '—'}</SpecValue>
                     </Spec>
                   </ProjectSpecs>
-                  <ProjectDescription>{project.specifications || project.description || '—'}</ProjectDescription>
-                  <Button onClick={() => handleProjectClick(project)}>
-                    View Details
-                  </Button>
+                  <ProjectDescription>{project.specifications || '—'}</ProjectDescription>
+                  <Button onClick={() => openProject(project)}>View Details</Button>
                 </ProjectCard>
               ))}
             </ProjectsGrid>
