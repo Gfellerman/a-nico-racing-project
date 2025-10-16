@@ -38,6 +38,14 @@ const Page = styled.div`
   font-family: 'Inter', Arial, sans-serif;
 `
 
+const withOrigin = (u?: string) => 
+  if (!u) return ''
+  if (u.startsWith('http')) return u
+  // Prefer a dedicated assets origin if you add it; else use API origin minus /api
+  const origin = (import.meta.env.VITE_ASSETS_URL || import.meta.env.VITE_API_URL || '').replace(/\/api$/, '')
+  return origin ? `${origin}${u}` : u
+,
+
 const Header = styled.header`
   border-bottom: 1px solid #333;
   padding: 1rem 2rem;
