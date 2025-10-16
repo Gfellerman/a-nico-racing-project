@@ -2,6 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
+// Helper: normalize Strapi media URLs to absolute URLs for Codespaces
+const withOrigin = (u?: string) => {
+  if (!u) return ''
+  if (u.startsWith('http')) return u
+  const base = (import.meta.env.VITE_ASSETS_URL || import.meta.env.VITE_API_URL || '').replace(/\/api$/, '')
+  return base ? `${base}${u}` : u
+}
+
 type MediaImage = {
   url: string
   alternativeText?: string
@@ -156,7 +164,7 @@ const ImageCounter = styled.div`
   border-radius: 20px; font-size: 14px;
 `
 
-// Rich text renderer (same as before)
+// Rich text renderer (unchanged)
 function renderRich(nodes: any): JSX.Element | null {
   if (!nodes) return null
   const arr = Array.isArray(nodes) ? nodes : nodes.children || []
@@ -269,13 +277,17 @@ export default function ProjectPage() {
   if (loading) return <Page><Header><BackBtn onClick={() => navigate(-1)}>← Back</BackBtn><div>ANRP</div></Header><Container>Loading…</Container></Page>
   if (!project) return <Page><Header><BackBtn onClick={() => navigate(-1)}>← Back</BackBtn><div>ANRP</div></Header><Container>Project not found.</Container></Page>
 
-  const heroUrl =
+  // Apply withOrigin to all media URLs
+  const heroUrl = withOrigin(
     project.featured_image?.data?.attributes?.formats?.large?.url ||
-    project.featured_image?.data?.attributes?.url || ''
+    project.featured_image?.data?.attributes?.url
+  )
 
   const gallery = project.image_gallery?.data || []
   const currentLightboxImage = gallery[currentImageIndex]
-  const lightboxImageUrl = currentLightboxImage?.attributes?.formats?.large?.url || currentLightboxImage?.attributes?.url
+  const lightboxImageUrl = withOrigin(
+    currentLightboxImage?.attributes?.formats?.large?.url || currentLightboxImage?.attributes?.url
+  )
 
   return (
     <Page>
@@ -354,7 +366,7 @@ export default function ProjectPage() {
               <GalleryGrid>
                 {gallery.map((img:any,idx:number)=>{
                   const a = img.attributes
-                  const thumb = a?.formats?.medium?.url || a?.url
+                  const thumb = withOrigin(a?.formats?.medium?.url || a?.url)
                   return (
                     <ImgThumb 
                       key={idx} 
