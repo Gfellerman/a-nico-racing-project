@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-// Helper: normalize Strapi media URLs to absolute URLs for Codespaces
+// Normalize Strapi media URLs to absolute URLs (Codespaces friendly)
 const withOrigin = (u?: string) => {
   if (!u) return ''
   if (u.startsWith('http')) return u
-  const base = (import.meta.env.VITE_ASSETS_URL || import.meta.env.VITE_API_URL || '').replace(/\/api$/, '')
-  return base ? `${base}${u}` : u
+  const origin = (import.meta.env.VITE_ASSETS_URL || import.meta.env.VITE_API_URL || '').replace(/\/api$/, '')
+  return origin ? `${origin}${u}` : u
 }
 
 type MediaImage = {
@@ -39,20 +39,13 @@ type ProjectResponse = {
   data: Array<{ id: number; attributes: ProjectAttributes }>
 }
 
+// --- Styled ---
 const Page = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
   color: #fff;
   font-family: 'Inter', Arial, sans-serif;
 `
-
-const withOrigin = (u?: string) => 
-  if (!u) return ''
-  if (u.startsWith('http')) return u
-  // Prefer a dedicated assets origin if you add it; else use API origin minus /api
-  const origin = (import.meta.env.VITE_ASSETS_URL || import.meta.env.VITE_API_URL || '').replace(/\/api$/, '')
-  return origin ? `${origin}${u}` : u
-,
 
 const Header = styled.header`
   border-bottom: 1px solid #333;
@@ -107,13 +100,8 @@ const GalleryGrid = styled.div`
 
 const ImgThumb = styled.img`
   width: 100%; height: 160px; object-fit: cover; border-radius: 8px; border: 1px solid #333;
-  cursor: pointer; 
-  transition: all 0.3s ease;
-  &:hover { 
-    border-color: #ff6b35; 
-    transform: scale(1.02);
-    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
-  }
+  cursor: pointer; transition: all 0.3s ease;
+  &:hover { border-color: #ff6b35; transform: scale(1.02); box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2); }
 `
 
 const BackBtn = styled.button`
@@ -121,58 +109,41 @@ const BackBtn = styled.button`
   &:hover { color: #fff; border-color: #666; }
 `
 
-// Lightbox Modal Components
+// Lightbox
 const LightboxOverlay = styled.div<{ $show: boolean }>`
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.9); z-index: 9999;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999;
   display: flex; align-items: center; justify-content: center;
-  opacity: ${({ $show }) => $show ? 1 : 0};
-  visibility: ${({ $show }) => $show ? 'visible' : 'hidden'};
+  opacity: ${({ $show }) => $show ? 1 : 0}; visibility: ${({ $show }) => $show ? 'visible' : 'hidden'};
   transition: all 0.3s ease;
 `
 
 const LightboxContent = styled.div`
-  position: relative; max-width: 95vw; max-height: 95vh;
-  display: flex; align-items: center; justify-content: center;
+  position: relative; max-width: 95vw; max-height: 95vh; display: flex; align-items: center; justify-content: center;
 `
 
 const LightboxImage = styled.img`
-  max-width: 100%; max-height: 95vh; object-fit: contain;
-  border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+  max-width: 100%; max-height: 95vh; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
 `
 
 const LightboxClose = styled.button`
-  position: absolute; top: -50px; right: 0;
-  background: rgba(255,107,53,0.8); color: white; border: none;
-  width: 40px; height: 40px; border-radius: 50%;
-  cursor: pointer; font-size: 20px; font-weight: bold;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.3s ease;
+  position: absolute; top: -50px; right: 0; background: rgba(255,107,53,0.8); color: white; border: none;
+  width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center;
   &:hover { background: #ff6b35; }
 `
 
 const NavButton = styled.button<{ $direction: 'prev' | 'next' }>`
   position: absolute; top: 50%; transform: translateY(-50%);
   ${({ $direction }) => $direction === 'prev' ? 'left: -60px;' : 'right: -60px;'}
-  background: rgba(255,107,53,0.8); color: white; border: none;
-  width: 50px; height: 50px; border-radius: 50%;
-  cursor: pointer; font-size: 18px; font-weight: bold;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.3s ease;
+  background: rgba(255,107,53,0.8); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer;
   &:hover { background: #ff6b35; }
-  @media (max-width: 768px) {
-    ${({ $direction }) => $direction === 'prev' ? 'left: 10px;' : 'right: 10px;'}
-    top: auto; bottom: 20px; transform: none;
-  }
+  @media (max-width: 768px) { ${({ $direction }) => $direction === 'prev' ? 'left: 10px;' : 'right: 10px;'} top: auto; bottom: 20px; transform: none; }
 `
 
 const ImageCounter = styled.div`
-  position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%);
-  color: #fff; background: rgba(0,0,0,0.7); padding: 8px 16px;
-  border-radius: 20px; font-size: 14px;
+  position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); color: #fff; background: rgba(0,0,0,0.7); padding: 8px 16px; border-radius: 20px; font-size: 14px;
 `
 
-// Rich text renderer (unchanged)
+// Rich text renderer
 function renderRich(nodes: any): JSX.Element | null {
   if (!nodes) return null
   const arr = Array.isArray(nodes) ? nodes : nodes.children || []
@@ -222,7 +193,7 @@ export default function ProjectPage() {
   const [tab, setTab] = useState<'overview'|'timeline'|'results'|'gallery'|'media'>('overview')
   const [loading, setLoading] = useState(true)
   const [project, setProject] = useState<ProjectAttributes | null>(null)
-  
+
   // Lightbox state
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -250,52 +221,39 @@ export default function ProjectPage() {
 
   // Keyboard navigation for lightbox
   useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (!lightboxOpen) return
-      
-      if (e.key === 'Escape') {
-        setLightboxOpen(false)
-      } else if (e.key === 'ArrowLeft') {
-        navigateImage('prev')
-      } else if (e.key === 'ArrowRight') {
-        navigateImage('next')
-      }
+      if (e.key === 'Escape') setLightboxOpen(false)
+      if (e.key === 'ArrowLeft') prev()
+      if (e.key === 'ArrowRight') next()
     }
-
-    window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
   }, [lightboxOpen, currentImageIndex])
 
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index)
-    setLightboxOpen(true)
+  const open = (idx: number) => { setCurrentImageIndex(idx); setLightboxOpen(true) }
+  const prev = () => {
+    const g = project?.image_gallery?.data || []
+    if (!g.length) return
+    setCurrentImageIndex(i => (i === 0 ? g.length - 1 : i - 1))
   }
-
-  const navigateImage = (direction: 'prev' | 'next') => {
-    const gallery = project?.image_gallery?.data || []
-    if (gallery.length === 0) return
-
-    if (direction === 'prev') {
-      setCurrentImageIndex((prev) => (prev === 0 ? gallery.length - 1 : prev - 1))
-    } else {
-      setCurrentImageIndex((prev) => (prev === gallery.length - 1 ? 0 : prev + 1))
-    }
+  const next = () => {
+    const g = project?.image_gallery?.data || []
+    if (!g.length) return
+    setCurrentImageIndex(i => (i === g.length - 1 ? 0 : i + 1))
   }
 
   if (loading) return <Page><Header><BackBtn onClick={() => navigate(-1)}>← Back</BackBtn><div>ANRP</div></Header><Container>Loading…</Container></Page>
   if (!project) return <Page><Header><BackBtn onClick={() => navigate(-1)}>← Back</BackBtn><div>ANRP</div></Header><Container>Project not found.</Container></Page>
 
-  // Apply withOrigin to all media URLs
   const heroUrl = withOrigin(
     project.featured_image?.data?.attributes?.formats?.large?.url ||
     project.featured_image?.data?.attributes?.url
   )
 
   const gallery = project.image_gallery?.data || []
-  const currentLightboxImage = gallery[currentImageIndex]
-  const lightboxImageUrl = withOrigin(
-    currentLightboxImage?.attributes?.formats?.large?.url || currentLightboxImage?.attributes?.url
-  )
+  const current = gallery[currentImageIndex]
+  const lightboxImageUrl = withOrigin(current?.attributes?.formats?.large?.url || current?.attributes?.url)
 
   return (
     <Page>
@@ -376,12 +334,7 @@ export default function ProjectPage() {
                   const a = img.attributes
                   const thumb = withOrigin(a?.formats?.medium?.url || a?.url)
                   return (
-                    <ImgThumb 
-                      key={idx} 
-                      src={thumb} 
-                      alt={a?.alternativeText || project.title}
-                      onClick={() => openLightbox(idx)}
-                    />
+                    <ImgThumb key={idx} src={thumb} alt={a?.alternativeText || project.title} onClick={() => open(idx)} />
                   )
                 })}
               </GalleryGrid>
@@ -407,30 +360,12 @@ export default function ProjectPage() {
         )}
       </Container>
 
-      {/* Lightbox Modal */}
       <LightboxOverlay $show={lightboxOpen} onClick={() => setLightboxOpen(false)}>
         <LightboxContent onClick={(e) => e.stopPropagation()}>
           <LightboxClose onClick={() => setLightboxOpen(false)}>×</LightboxClose>
-          
-          {gallery.length > 1 && (
-            <>
-              <NavButton $direction="prev" onClick={() => navigateImage('prev')}>‹</NavButton>
-              <NavButton $direction="next" onClick={() => navigateImage('next')}>›</NavButton>
-            </>
-          )}
-          
-          {lightboxImageUrl && (
-            <LightboxImage 
-              src={lightboxImageUrl} 
-              alt={currentLightboxImage?.attributes?.alternativeText || project.title}
-            />
-          )}
-          
-          {gallery.length > 1 && (
-            <ImageCounter>
-              {currentImageIndex + 1} / {gallery.length}
-            </ImageCounter>
-          )}
+          {gallery.length > 1 && (<><NavButton $direction="prev" onClick={prev}>‹</NavButton><NavButton $direction="next" onClick={next}>›</NavButton></>)}
+          {lightboxImageUrl && (<LightboxImage src={lightboxImageUrl} alt={current?.attributes?.alternativeText || project.title} />)}
+          {gallery.length > 1 && (<ImageCounter>{currentImageIndex + 1} / {gallery.length}</ImageCounter>)}
         </LightboxContent>
       </LightboxOverlay>
     </Page>
