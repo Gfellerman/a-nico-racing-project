@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { mockProjects } from '../mock-projects.js'
 
 // Normalize Strapi media URLs to absolute URLs (Codespaces friendly)
 const withOrigin = (u?: string) => {
@@ -208,14 +207,11 @@ export default function ProjectPage() {
           ? `${base}/projects?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=*`
           : `${base}/projects?populate=*`
         const res = await fetch(url)
-        if (!res.ok) throw new Error('Failed to fetch')
         const json: ProjectResponse = await res.json()
         const item = json.data?.[0]?.attributes || null
         setProject(item)
       } catch (e) {
-        console.error('API fetch failed, using mock data:', e)
-        const mockProject = mockProjects.find(p => p.attributes.slug === slug)
-        setProject(mockProject ? mockProject.attributes : null)
+        console.error(e)
       } finally {
         setLoading(false)
       }

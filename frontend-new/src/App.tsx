@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
-import { mockProjects } from './mock-projects.js'
 
 // Types
 interface Project {
@@ -237,10 +236,8 @@ function App() {
       }))
       setProjects(normalized)
     } catch (err) {
-      console.error('API fetch failed, using mock data:', err)
-      const normalizedMock = mockProjects.map(p => ({ ...p.attributes, id: p.id }))
-      setProjects(normalizedMock)
-      setError(null) // Clear error when using mock data
+      console.error('Error fetching projects:', err)
+      setError('Failed to load projects. Please check if Strapi is running and your Codespace .env is correct.')
     } finally {
       setLoading(false)
     }

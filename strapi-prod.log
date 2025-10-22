@@ -1,0 +1,6 @@
+
+> backend@0.1.0 start
+> strapi start
+
+[2025-10-22 18:00:49.517] [34mdebug[39m: ⛔️ Server wasn't able to start properly.
+[2025-10-22 18:00:49.519] [31merror[39m: The port 1337 is already used by another application.
